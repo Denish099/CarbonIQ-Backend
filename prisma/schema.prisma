@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  password    String
+  industries  Industry[]
+}
+
+model Industry {
+  id        Int       @id @default(autoincrement())
+  type     String    // e.g., "Agriculture", "Manufacturing", "Transportation"
+  name      String
+  location  String
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  consumptions FuelConsumption[]
+}
+
+model Fuel {
+  id              Int       @id @default(autoincrement())
+  name            String
+  unit            String     // e.g., "liter", "kg", "m3"
+  emissionFactor  Float      // kg CO₂ per unit
+  consumptions    FuelConsumption[]
+}
+
+model FuelConsumption {
+  id               Int      @id @default(autoincrement())
+  industryId       Int
+  fuelId           Int
+  amount           Float     // fuel consumed
+  hours            Int
+  energyKwh        Float
+  severity         String
+  suggestions      String   // Store JSON string or plain text
+  emissionsKg      Float
+
+  industry         Industry  @relation(fields: [industryId], references: [id])
+  fuel             Fuel      @relation(fields: [fuelId], references: [id])
+}
