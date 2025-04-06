@@ -11,7 +11,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://carbon-frontend-3zs4.vercel.app/",
     credentials: true,
   })
 );
@@ -19,6 +19,4 @@ app.use("/auth", authRoute);
 
 app.use("/predict", predictRoute);
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+module.exports = app;
